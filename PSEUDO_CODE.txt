@@ -1,5 +1,5 @@
 ```
-PSEUDO CODE FOR BATTLESHIP-STYLE MINESWEEPER
+PSEUDO CODE FOR MINESWEEPER
 
 GLOBAL VARIABLES:
     board[HEIGHT][WIDTH] - internal board storing mine positions (char array)
