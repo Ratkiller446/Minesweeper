@@ -164,7 +164,7 @@ static void reveal(int x, int y)
 static void flag(int x, int y)
 {
     if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) return;
-    if (display_board[y][x] != HIDDEN) return;  /* Can't flag revealed cells */
+    if (display_board[y][x] != HIDDEN && display_board[y][x] != FLAGGED) return;  /* Can't flag revealed cells */
     
     if (display_board[y][x] == HIDDEN) {
         display_board[y][x] = FLAGGED;
@@ -245,16 +245,16 @@ static int process_input(void)
     
     if (fgets(input, sizeof(input), stdin) == NULL) return 0;
     
-    if (sscanf(input, "%c %d %d", &cmd, &y, &x) == 3) {
-        if (y < 0 || y >= HEIGHT || x < 0 || x >= WIDTH) {
+    if (sscanf(input, "%c %d %d", &cmd, &x, &y) == 3) {
+        if (x < 0 || x >= HEIGHT || y < 0 || y >= WIDTH) {
             printf("Invalid coordinates! Use row 0-%d, col 0-%d\n", HEIGHT-1, WIDTH-1);
             return 1;
         }
         
         if (cmd == 'r' || cmd == 'R') {
-            reveal(x, y);
+            reveal(y, x);
         } else if (cmd == 'f' || cmd == 'F') {
-            flag(x, y);
+            flag(y, x);
         } else {
             puts("Invalid command! Use 'r' for reveal, 'f' for flag");
             return 1;
