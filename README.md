@@ -1,29 +1,17 @@
 # Suckless Minesweeper
 
+A minimalist implementation of the classic Minesweeper game inspired by the Suckless and Less Retarded Software (LRS) philosophies, using a Battleship-style board approach for simplicity and reuse of proven patterns.
 
-+A minimalist implementation of the classic Minesweeper game inspired by the Suckless and Less Retarded Software (LRS) philosophies, using a Battleship-style board approach for simplicity and reuse of proven patterns.
+## Philosophy
 
+This implementation follows principles of extreme minimalism and the suckless way of software development:
 
-
-+## Philosophy
-
-+
-
-+This implementation follows principles of extreme minimalism and the suckless way of software development:
-
-+
-
-+- **Minimalist**: Single compilation unit, no external dependencies beyond standard C library
-
-+- **Simple**: Does one thing well - provides Minesweeper gameplay
-
-+- **Reusable**: Uses Battleship-style board approach for proven simplicity
-+- **Hackable**: Easy to modify and customize by editing source code
-
-+- **Self-contained**: Just compile and run, no configuration files needed
-
-+- **Portable**: Written in C99 for maximum compatibility
-
+- **Minimalist**: Single compilation unit, no external dependencies beyond standard C library
+- **Simple**: Does one thing well - provides Minesweeper gameplay
+- **Reusable**: Uses Battleship-style board approach for proven simplicity
+- **Hackable**: Easy to modify and customize by editing source code
+- **Self-contained**: Just compile and run, no configuration files needed
+- **Portable**: Written in C99 for maximum compatibility
 
 ## Features
 
@@ -51,34 +39,20 @@ cc -DWIDTH=20 -DHEIGHT=20 -DMINES=50 minesweeper_suckless.c -o minesweeper
 
 ## Controls
 
+Commands use row-first ordering (row, column):
 
-- `r row col`: Reveal cell at coordinates (row, col)
-- `f row col`: Toggle flag at coordinates (row, col)
+- `r row col`: Reveal cell at coordinates (e.g., `r 2 3` reveals row 2, column 3)
+- `f row col`: Toggle flag at coordinates (e.g., `f 4 1` flags row 4, column 1)
 - `q`: Quit game
-
 
 ## Customization
 
+Edit these compile-time constants in the source or define them during compilation with `-D` flags:
 
 - `WIDTH`: Board width (default 9)
 - `HEIGHT`: Board height (default 9) 
-
 - `MINES`: Number of mines (default 10)
-
-### Input Format
-Commands now use row-first ordering (row, column) instead of (x, y):
-- `r 2 3` reveals the square at row 2, column 3
-- `f 4 1` flags the square at row 4, column 1
-
-
-Simply edit the source or define them during compilation with `-D` flags.
-
-
-+## Public Domain Release
-+
-+This software is released into the public domain using the Unlicense. There are no restrictions on use, modification, or distribution. This maximizes freedom for all users without any copyright claims or artificial restrictions.
-
 
 ## License
 
-Public Domain (CC0 + patent waivers)
+This software is released into the public domain using the Unlicense (CC0 + patent waivers). There are no restrictions on use, modification, or distribution. This maximizes freedom for all users without any copyright claims or artificial restrictions.
