@@ -1,0 +1,141 @@
+```
+PSEUDO CODE FOR BATTLESHIP-STYLE MINESWEEPER
+
+GLOBAL VARIABLES:
+    board[HEIGHT][WIDTH] - internal board storing mine positions (char array)
+    display_board[HEIGHT][WIDTH] - what player sees (char array)
+    game_over - true/false if game ended
+    won - true/false if player won
+    first_move - true if first click happened yet
+
+DEFINE CONSTANTS:
+    HIDDEN = '.'    (empty cell that's hidden)
+    MINE = '*'      (cell with mine)
+    REVEALED = '0'  (revealed empty space with adjacent mine count)
+    FLAGGED = 'F'   (player flagged this square)
+    MISS = 'X'      (miss marker)
+
+INITIALIZE GAME:
+    set all board squares to HIDDEN
+    set all display_board squares to HIDDEN
+    set game_over = false
+    set won = false
+    set first_move = true
+    seed random number generator
+
+COUNT ADJACENT MINES FUNCTION (x, y):
+    count = 0
+    for each direction (up, down, left, right, and all diagonals):
+        new_x = x + direction_x
+        new_y = y + direction_y
+        if new_x and new_y are within board boundaries:
+            if board[new_y][new_x] equals MINE:
+                count = count + 1
+    return count
+
+PLACE MINES FUNCTION (safe_x, safe_y):
+    mines_placed = 0
+    while mines_placed < MINES:
+        random_x = random number between 0 and WIDTH-1
+        random_y = random number between 0 and HEIGHT-1
+        if (random_x, random_y) is not the safe square AND board[random_y][random_x] is not MINE:
+            set board[random_y][random_x] to MINE
+            mines_placed = mines_placed + 1
+
+REVEAL FUNCTION (x, y):
+    if x,y is outside board boundaries: return
+    if display_board[y][x] is not HIDDEN: return (already revealed or flagged)
+
+    if this is first move EVER made in the game:
+        call PLACE MINES FUNCTION (with x,y as safe square)
+        set first_move = false
+
+    if board[y][x] equals MINE: (clicking mine)
+        set game_over = true
+        set display_board[y][x] = MINE (show the mine that was hit)
+        return
+
+    USE ITERATIVE FLOOD FILL for revealing empty areas:
+    create queue for BFS [x, y, x, y, ...]
+    front = 0, rear = 0
+    add (x, y) to queue
+
+    while queue is not empty:
+        get current_x, current_y from queue[front]
+        front = front + 2
+
+        if display_board[current_y][current_x] is not HIDDEN: continue
+
+        mine_count = COUNT ADJACENT MINES FUNCTION (current_x, current_y)
+        if mine_count is 0: set display_board[current_y][current_x] to ' ' (space)
+        else: set display_board[current_y][current_x] to character of mine_count
+
+        if mine_count is 0 (empty area): (flood fill)
+            for each adjacent square (8 directions):
+                if square is within bounds AND display_board[square] is HIDDEN AND board[square] is not MINE:
+                    add square to queue
+
+FLAG FUNCTION (x, y):
+    if x,y is outside board boundaries: return
+    if display_board[y][x] is not HIDDEN: return (can't flag revealed squares)
+    if display_board[y][x] equals HIDDEN: set to FLAGGED
+    else if display_board[y][x] equals FLAGGED: set back to HIDDEN
+
+CHECK WIN FUNCTION:
+    revealed_count = 0
+    total_safe = WIDTH * HEIGHT - MINES
+    for each square on board:
+        if display_board[y][x] is not HIDDEN and not FLAGGED:
+            revealed_count = revealed_count + 1
+    if revealed_count equals total_safe: return true (won)
+    else: return false (not won)
+
+COUNT FLAGS FUNCTION:
+    count = 0
+    for each square on board:
+        if display_board[y][x] equals FLAGGED: count = count + 1
+    return count
+
+DRAW BOARD FUNCTION:
+    count flags using COUNT FLAGS FUNCTION
+    print "Mines: [number of mines], Flags: [flag count], Status message"
+    print column numbers across top (0 through WIDTH-1)
+    for each row (0 through HEIGHT-1):
+        print row number on left
+        for each square in row:
+            print display_board[y][x] followed by space
+        print new line for next row
+
+PROCESS INPUT FUNCTION:
+    print "Command (r row col=Reveal, f row col=Flag, q=Quit): "
+    read input from user
+    if input is "r row col" (reveal command): (note: row is y, col is x)
+        if coordinates are valid:
+            call REVEAL FUNCTION (col, row)  // convert (row, col) to (x, y)
+        else: print error message
+    else if input is "f row col" (flag command):
+        if coordinates are valid:
+            call FLAG FUNCTION (col, row)   // convert (row, col) to (x, y)
+        else: print error message
+    else if input is "q" (quit command):
+        return 0 (to quit)
+    else: print invalid input message
+    return 1 (to continue)
+
+GAME CONTINUE FUNCTION:
+    if game_over is true: (game ended)
+        if won is true: print "You won!"
+        else: print "You hit a mine!"
+        return 0 (game should stop)
+    else: (game still going)
+        call CHECK WIN FUNCTION
+        if player won: set game_over = true and won = true
+        return 1 (game should continue)
+
+MAIN GAME LOOP:
+    call INITIALIZE GAME
+    while GAME CONTINUE FUNCTION returns 1:
+        call DRAW BOARD FUNCTION
+        if PROCESS INPUT FUNCTION returns 0: break (quit)
+    call DRAW BOARD FUNCTION one final time
+    print "Thanks for playing!"
